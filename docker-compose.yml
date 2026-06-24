@@ -1,0 +1,7 @@
+services:
+  worldcup-agent:
+    build: .
+    env_file: .env
+    volumes:
+      - ./notified_matches.json:/app/notified_matches.json
+    restart: unless-stopped
