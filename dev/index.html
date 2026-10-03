@@ -3,166 +3,168 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Location Manicrac</title>
+<title>Chouchou</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap">
 <style>
-  /* Layout : enseigne de fête foraine en ouverture (cadre d'ampoules), puis sections simples en une colonne qui s'élargit en grille. */
+  /* Layout : papeterie fine inspirée du logo. Filets dorés, cercle en pointillés, cadres en arche pour les machines, beaucoup d'air. */
   :root {
-    --bg: #f5f6fa;
-    --surface: #ffffff;
-    --ink: #17203a;
-    --muted: #59627a;
-    --line: #dcdfe8;
-    --accent: #d93a24;
-    --accent-ink: #ffffff;
-    --stage: #17203a;
-    --stage-ink: #f5f6fa;
-    --bulb: #f2b705;
-    --bulb-off: #e6dcc0;
-    --todo-bg: #fff6d6;
-    --todo-ink: #7a5800;
-    --display: "Bowlby One", "Arial Black", Impact, sans-serif;
-    --body: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --bg: #fefaf7;          /* fond du logo */
+    --paper: #f8efea;       /* blush un ton plus soutenu */
+    --ink: #3d2b33;         /* prune très sombre pour le texte */
+    --muted: #7c6a70;
+    --gold: #a68a6a;        /* trait du logo */
+    --gold-soft: #e3d6c6;
+    --rose: #b4578a;        /* hortensia */
+    --rose-ink: #ffffff;
+    --todo-bg: #fbe8f1;
+    --todo-ink: #8c3a66;
+    --display: "Cormorant Garamond", "Cormorant", Garamond, "Times New Roman", serif;
+    --body: "Jost", "Futura", "Avenir Next", system-ui, sans-serif;
     color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #111627; --surface: #1a2135; --ink: #eef0f6; --muted: #a5adc2;
-      --stage: #0a0e1b; --stage-ink: #eef0f6;
-      --line: #2c3550; --accent: #ff6a52; --accent-ink: #1a0d0a;
-      --bulb: #ffc928; --bulb-off: #3b3a33; --todo-bg: #3a3112; --todo-ink: #ffd96b;
+      --bg: #1f171b; --paper: #2a2025; --ink: #f6ece9; --muted: #bba9ae;
+      --gold: #cbb08e; --gold-soft: #4a3d36; --rose: #e39ac2; --rose-ink: #2a1520;
+      --todo-bg: #47243a; --todo-ink: #f6bfdc;
       color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #111627; --surface: #1a2135; --ink: #eef0f6; --muted: #a5adc2;
-    --stage: #0a0e1b; --stage-ink: #eef0f6;
-      --line: #2c3550; --accent: #ff6a52; --accent-ink: #1a0d0a;
-    --bulb: #ffc928; --bulb-off: #3b3a33; --todo-bg: #3a3112; --todo-ink: #ffd96b;
+    --bg: #1f171b; --paper: #2a2025; --ink: #f6ece9; --muted: #bba9ae;
+    --gold: #cbb08e; --gold-soft: #4a3d36; --rose: #e39ac2; --rose-ink: #2a1520;
+    --todo-bg: #47243a; --todo-ink: #f6bfdc;
     color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font: 400 1.0625rem/1.6 var(--body);
-  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 300 1.0625rem/1.7 var(--body); }
   .wrap { max-width: 1080px; margin: 0 auto; padding-inline: 16px; }
-  h1, h2, h3 { text-wrap: balance; margin: 0; }
-  h2 { font: 400 clamp(1.6rem, 4vw, 2.2rem)/1.15 var(--display); letter-spacing: .01em; }
-  h3 { font-size: 1.15rem; font-weight: 800; }
-  p { margin: 0; max-width: 65ch; }
-  a { color: var(--accent); }
-  :focus-visible { outline: 3px solid var(--bulb); outline-offset: 2px; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; line-height: 1.1; }
+  h2 { font-size: clamp(2rem, 5vw, 2.8rem); }
+  h3 { font-size: 1.5rem; }
+  p { margin: 0; max-width: 62ch; }
+  a { color: var(--rose); }
+  :focus-visible { outline: 2px solid var(--rose); outline-offset: 3px; }
+
+  .eyebrow {
+    font: 400 .78rem/1 var(--body); letter-spacing: .32em; text-transform: uppercase; color: var(--gold);
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  /* les deux petits tirets du cercle du logo */
+  .eyebrow::before { content: ""; width: 26px; height: 1px; background: linear-gradient(90deg, var(--gold) 0 40%, transparent 40% 60%, var(--gold) 60%); }
 
   .todo {
     display: inline-block; background: var(--todo-bg); color: var(--todo-ink);
-    border: 1px dashed currentColor; border-radius: 4px; padding: 0 .4em;
-    font-size: .85em; font-weight: 600;
+    border: 1px dashed currentColor; border-radius: 4px; padding: 0 .45em;
+    font: 400 .82rem/1.6 var(--body); letter-spacing: 0; text-transform: none; vertical-align: middle;
   }
 
   /* Navigation */
-  .nav {
-    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
-    backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
-  }
-  .nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
-  .brand { font: 400 1.25rem/1 var(--display); color: var(--ink); text-decoration: none; }
-  .nav ul { display: flex; gap: 20px; list-style: none; margin: 0; padding: 0; font-weight: 600; font-size: .95rem; }
+  .nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--gold-soft); }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 14px; }
+  .brand { font: 500 1.05rem/1 var(--display); letter-spacing: .38em; color: var(--ink); text-decoration: none; }
+  .nav ul { display: flex; align-items: center; gap: 26px; list-style: none; margin: 0; padding: 0; font-size: .9rem; letter-spacing: .04em; }
   .nav ul a { color: var(--ink); text-decoration: none; }
-  .nav ul a:hover { color: var(--accent); }
-  @media (max-width: 640px) { .nav ul li:not(:last-child) { display: none; } }
+  .nav ul a:hover { color: var(--rose); }
+  @media (max-width: 700px) { .nav ul li:not(:last-child) { display: none; } }
 
   .btn {
-    display: inline-block; background: var(--accent); color: var(--accent-ink);
-    font-weight: 800; text-decoration: none; border: 0; border-radius: 999px;
-    padding: .7em 1.4em; font-family: var(--body); font-size: 1rem; cursor: pointer;
+    display: inline-block; background: var(--rose); color: var(--rose-ink); text-decoration: none;
+    border: 1px solid var(--rose); border-radius: 999px; padding: .65em 1.5em;
+    font: 400 .95rem/1.2 var(--body); letter-spacing: .06em; cursor: pointer;
+    transition: background .2s, color .2s;
   }
-  .btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .btn:hover { background: transparent; color: var(--rose); }
+  .btn.line { background: transparent; color: var(--ink); border-color: var(--gold); }
+  .btn.line:hover { border-color: var(--rose); color: var(--rose); }
+  .nav .btn { padding: .5em 1.2em; font-size: .85rem; }
 
-  /* Hero : l'enseigne lumineuse */
-  .hero { padding-block: 40px 56px; }
-  .marquee {
-    position: relative; border-radius: 22px; padding: 44px 28px;
-    background: var(--stage); color: var(--stage-ink);
+  /* Hero */
+  .hero { display: grid; gap: 32px; align-items: center; padding-block: 48px 72px; }
+  @media (min-width: 820px) { .hero { grid-template-columns: 1.1fr .9fr; gap: 56px; } }
+  .hero > * { min-width: 0; }
+  .hero-text { display: grid; gap: 22px; justify-items: start; }
+  .hero h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); line-height: 1.02; }
+  .hero h1 em { color: var(--rose); }
+  .hero p { color: var(--muted); font-size: 1.15rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .logo-disc {
+    width: min(100%, 440px); aspect-ratio: 1; justify-self: center; border-radius: 50%;
+    background: #fefaf7; /* fond du logo, gardé dans les deux thèmes */
+    overflow: hidden; box-shadow: 0 0 0 1px var(--gold-soft), 0 0 0 14px var(--bg), 0 0 0 15px var(--gold-soft);
   }
-  .marquee::before {
-    content: ""; position: absolute; inset: 10px; border-radius: 14px; pointer-events: none;
-    background:
-      radial-gradient(circle, var(--bulb) 3.5px, transparent 4.5px) 0 0 / 22px 22px repeat-x,
-      radial-gradient(circle, var(--bulb) 3.5px, transparent 4.5px) 0 100% / 22px 22px repeat-x,
-      radial-gradient(circle, var(--bulb) 3.5px, transparent 4.5px) 0 0 / 22px 22px repeat-y,
-      radial-gradient(circle, var(--bulb) 3.5px, transparent 4.5px) 100% 0 / 22px 22px repeat-y;
-    animation: chase 1.6s steps(2) infinite;
-  }
-  @keyframes chase { 50% { filter: brightness(.55); } }
-  @media (prefers-reduced-motion: reduce) { .marquee::before { animation: none; } }
-  .marquee > * { position: relative; }
-  .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-weight: 800; font-size: .8rem; color: var(--bulb); }
-  .hero h1 { font: 400 clamp(2.2rem, 7vw, 4.4rem)/1.02 var(--display); margin-block: 12px 18px; }
-  .hero h1 span { color: var(--bulb); }
-  .hero p { color: color-mix(in srgb, var(--stage-ink) 82%, var(--stage)); font-size: 1.15rem; }
-  .hero .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
-  .hero .btn.ghost { color: var(--stage-ink); box-shadow: inset 0 0 0 2px var(--stage-ink); }
+  .logo-disc img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.12); }
 
-  section.block { padding-block: 56px; border-top: 1px solid var(--line); }
-  .block header { display: grid; gap: 10px; margin-bottom: 28px; }
+  section.block { padding-block: 72px; }
+  section.tinted { background: var(--paper); }
+  .block header { display: grid; gap: 14px; margin-bottom: 40px; justify-items: start; }
   .block header p { color: var(--muted); }
 
   /* Pour qui */
-  .audiences { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
-  .audience { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: grid; gap: 12px; align-content: start; }
-  .audience .tag { font: 400 .95rem/1 var(--display); color: var(--accent); letter-spacing: .03em; }
-  .audience ul { margin: 0; padding-left: 1.1em; color: var(--muted); }
+  .audiences { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+  .audience { border: 1px solid var(--gold-soft); border-radius: 4px; padding: 30px 28px; display: grid; gap: 14px; align-content: start; background: var(--bg); }
+  .audience ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .audience li { display: flex; gap: 10px; align-items: baseline; }
+  .audience li::before { content: "✿"; color: var(--rose); font-size: .8em; }
 
   /* Machines */
-  .machines { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
-  .machine { display: grid; gap: 12px; align-content: start; }
-  .photo {
-    aspect-ratio: 4 / 3; max-width: 100%; border-radius: 14px;
-    border: 2px dashed var(--line); display: grid; place-items: center;
-    color: var(--muted); font-size: .9rem; background: var(--surface);
+  .machines { display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+  .machine { display: grid; gap: 14px; align-content: start; }
+  .arch {
+    aspect-ratio: 3 / 4; max-width: 100%; border-radius: 999px 999px 4px 4px;
+    border: 1px solid var(--gold); background: var(--paper);
+    display: grid; place-items: center; color: var(--muted); font-size: .9rem; letter-spacing: .04em;
   }
-  .specs { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 0; font-size: .95rem; }
+  .specs { display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; margin: 0; font-size: .95rem; border-top: 1px solid var(--gold-soft); padding-top: 12px; }
   .specs dt { color: var(--muted); }
   .specs dd { margin: 0; }
 
   /* Déroulé */
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); counter-reset: step; }
-  .steps li { counter-increment: step; display: grid; gap: 6px; align-content: start; }
-  .steps li::before { content: counter(step); font: 400 2.4rem/1 var(--display); color: var(--accent); }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); counter-reset: step; }
+  .steps li { counter-increment: step; display: grid; gap: 8px; align-content: start; }
+  .steps li::before {
+    content: counter(step); width: 46px; height: 46px; border-radius: 50%;
+    border: 1px dashed var(--gold); display: grid; place-items: center;
+    font: italic 400 1.4rem/1 var(--display); color: var(--rose);
+  }
+  .steps h3 { font-size: 1.35rem; }
   .steps p { color: var(--muted); }
 
   /* Contact */
-  .contact { display: grid; gap: 28px; grid-template-columns: 1fr; }
-  @media (min-width: 820px) { .contact { grid-template-columns: 1fr 1.3fr; } }
+  .contact { display: grid; gap: 32px; }
+  @media (min-width: 820px) { .contact { grid-template-columns: 1fr 1.4fr; } }
   .contact > * { min-width: 0; }
-  .coords { display: grid; gap: 14px; align-content: start; }
-  .coords div { display: grid; gap: 2px; justify-items: start; }
-  .coords span:first-child { text-transform: uppercase; letter-spacing: .08em; font-size: .75rem; font-weight: 800; color: var(--muted); }
-  form { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; display: grid; gap: 14px; }
-  .row { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); }
-  label { display: grid; gap: 4px; font-weight: 600; font-size: .9rem; }
+  .coords { display: grid; gap: 18px; align-content: start; }
+  .coords div { display: grid; gap: 4px; justify-items: start; }
+  .coords span:first-child { font-size: .72rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold); }
+  form { background: var(--bg); border: 1px solid var(--gold-soft); border-radius: 4px; padding: 26px; display: grid; gap: 16px; }
+  .row { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); }
+  label { display: grid; gap: 6px; font-size: .85rem; letter-spacing: .04em; color: var(--muted); }
   input, select, textarea {
-    font: inherit; font-weight: 400; color: var(--ink); background: var(--bg);
-    border: 1px solid var(--line); border-radius: 8px; padding: .55em .7em; width: 100%;
+    font: 400 1rem/1.4 var(--body); color: var(--ink); background: transparent;
+    border: 0; border-bottom: 1px solid var(--gold); border-radius: 0; padding: .45em .1em; width: 100%;
   }
+  input:focus, select:focus, textarea:focus { outline: none; border-bottom-color: var(--rose); box-shadow: 0 1px 0 var(--rose); }
+  select option { background: var(--bg); color: var(--ink); }
   textarea { min-height: 110px; resize: vertical; }
-  .note { font-size: .9rem; color: var(--muted); }
-  .sent { border-radius: 10px; padding: 12px 14px; background: var(--todo-bg); color: var(--todo-ink); font-size: .95rem; }
+  .note { font-size: .85rem; color: var(--muted); }
+  .sent { border-radius: 4px; padding: 12px 14px; background: var(--todo-bg); color: var(--todo-ink); font-size: .95rem; }
 
-  footer { border-top: 1px solid var(--line); padding-block: 28px; color: var(--muted); font-size: .9rem; }
+  footer { border-top: 1px solid var(--gold-soft); padding-block: 32px; color: var(--muted); font-size: .85rem; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+  footer .brand { font-size: .95rem; }
 </style>
 </head>
 <body>
 
 <nav class="nav" aria-label="Navigation principale">
   <div class="wrap">
-    <a class="brand" href="#top">Manicrac <span class="todo">nom</span></a>
+    <a class="brand" href="#top">CHOUCHOU</a>
     <ul>
       <li><a href="#pour-qui">Pour qui</a></li>
       <li><a href="#machines">Les machines</a></li>
@@ -174,42 +176,44 @@
 
 <main id="top">
   <div class="wrap hero">
-    <div class="marquee">
-      <p class="eyebrow">Location de machines Manicrac</p>
-      <h1>Votre événement a besoin d'une <span>attraction</span>.</h1>
-      <p>Nous livrons et installons des machines Manicrac pour vos fêtes privées et vos événements d'entreprise.
+    <div class="hero-text">
+      <span class="eyebrow">Location de machines Manicrac</span>
+      <h1>Une touche de douceur pour vos <em>plus beaux</em> événements</h1>
+      <p>Chouchou livre et installe ses machines Manicrac pour vos fêtes privées et vos événements professionnels.
         <span class="todo">accroche à valider</span></p>
       <div class="actions">
         <a class="btn" href="#devis">Demander un devis</a>
-        <a class="btn ghost" href="#machines">Voir les machines</a>
+        <a class="btn line" href="#machines">Découvrir les machines</a>
       </div>
     </div>
+    <div class="logo-disc"><img src="logo.jpg" alt="Logo Chouchou : un distributeur vintage et un hortensia rose dans un cercle doré"></div>
   </div>
 
-  <section class="block" id="pour-qui">
+  <section class="block tinted" id="pour-qui">
     <div class="wrap">
       <header>
-        <h2>Pour qui ?</h2>
-        <p>Particuliers ou entreprises, la machine s'adapte à votre format.</p>
+        <span class="eyebrow">Pour qui</span>
+        <h2>Particuliers et entreprises</h2>
+        <p>Une machine qui s'adapte au style de votre événement.</p>
       </header>
       <div class="audiences">
         <article class="audience">
-          <span class="tag">Événements privés</span>
-          <h3>Pour faire la fête</h3>
+          <span class="eyebrow">Événements privés</span>
+          <h3>Pour faire plaisir à vos invités</h3>
           <ul>
-            <li>Anniversaires</li>
             <li>Mariages</li>
-            <li>Soirées entre amis</li>
+            <li>Anniversaires</li>
+            <li>Baptêmes et baby showers</li>
             <li><span class="todo">autres occasions ?</span></li>
           </ul>
         </article>
         <article class="audience">
-          <span class="tag">Événements professionnels</span>
-          <h3>Pour marquer les esprits</h3>
+          <span class="eyebrow">Événements professionnels</span>
+          <h3>Pour une attention qui marque</h3>
           <ul>
-            <li>Séminaires et team building</li>
-            <li>Salons et stands</li>
             <li>Soirées d'entreprise</li>
+            <li>Salons et stands</li>
+            <li>Séminaires</li>
             <li><span class="todo">autres occasions ?</span></li>
           </ul>
         </article>
@@ -220,34 +224,35 @@
   <section class="block" id="machines">
     <div class="wrap">
       <header>
+        <span class="eyebrow">La collection</span>
         <h2>Les machines</h2>
         <p><span class="todo">Description d'une machine Manicrac : ce que font les invités, pourquoi ça plaît</span></p>
       </header>
       <div class="machines">
         <article class="machine">
-          <div class="photo">Photo à ajouter</div>
+          <div class="arch">Photo à ajouter</div>
           <h3>Machine 1 <span class="todo">nom</span></h3>
           <dl class="specs">
             <dt>Dimensions</dt><dd><span class="todo">à compléter</span></dd>
-            <dt>Alimentation</dt><dd><span class="todo">à compléter</span></dd>
+            <dt>Contenu</dt><dd><span class="todo">à compléter</span></dd>
             <dt>Tarif</dt><dd><span class="todo">à compléter</span></dd>
           </dl>
         </article>
         <article class="machine">
-          <div class="photo">Photo à ajouter</div>
+          <div class="arch">Photo à ajouter</div>
           <h3>Machine 2 <span class="todo">nom</span></h3>
           <dl class="specs">
             <dt>Dimensions</dt><dd><span class="todo">à compléter</span></dd>
-            <dt>Alimentation</dt><dd><span class="todo">à compléter</span></dd>
+            <dt>Contenu</dt><dd><span class="todo">à compléter</span></dd>
             <dt>Tarif</dt><dd><span class="todo">à compléter</span></dd>
           </dl>
         </article>
         <article class="machine">
-          <div class="photo">Photo à ajouter</div>
+          <div class="arch">Photo à ajouter</div>
           <h3>Machine 3 <span class="todo">nom</span></h3>
           <dl class="specs">
             <dt>Dimensions</dt><dd><span class="todo">à compléter</span></dd>
-            <dt>Alimentation</dt><dd><span class="todo">à compléter</span></dd>
+            <dt>Contenu</dt><dd><span class="todo">à compléter</span></dd>
             <dt>Tarif</dt><dd><span class="todo">à compléter</span></dd>
           </dl>
         </article>
@@ -255,17 +260,18 @@
     </div>
   </section>
 
-  <section class="block" id="deroule">
+  <section class="block tinted" id="deroule">
     <div class="wrap">
       <header>
-        <h2>Comment ça marche</h2>
-        <p>Une location en quatre étapes. <span class="todo">déroulé à valider</span></p>
+        <span class="eyebrow">Comment ça marche</span>
+        <h2>Une location en quatre étapes</h2>
+        <p><span class="todo">déroulé à valider</span></p>
       </header>
       <ol class="steps">
-        <li><h3>Vous demandez un devis</h3><p>Date, lieu, nombre d'invités : on vous répond avec une proposition.</p></li>
-        <li><h3>On livre et on installe</h3><p>La machine arrive prête à fonctionner sur le lieu de l'événement.</p></li>
+        <li><h3>Vous demandez un devis</h3><p>Date, lieu, nombre d'invités : nous vous répondons avec une proposition.</p></li>
+        <li><h3>Nous livrons et installons</h3><p>La machine arrive prête à l'emploi sur le lieu de votre événement.</p></li>
         <li><h3>Vos invités en profitent</h3><p>Pendant toute la durée de la location.</p></li>
-        <li><h3>On reprend la machine</h3><p>Démontage et retour, vous n'avez rien à gérer.</p></li>
+        <li><h3>Nous reprenons la machine</h3><p>Démontage et retour, vous n'avez rien à gérer.</p></li>
       </ol>
     </div>
   </section>
@@ -273,14 +279,16 @@
   <section class="block" id="devis">
     <div class="wrap">
       <header>
+        <span class="eyebrow">Contact</span>
         <h2>Demander un devis</h2>
-        <p>Décrivez votre événement, nous revenons vers vous rapidement.</p>
+        <p>Racontez-nous votre événement, nous revenons vers vous rapidement.</p>
       </header>
       <div class="contact">
         <div class="coords">
           <div><span>Téléphone</span><span class="todo">à compléter</span></div>
           <div><span>Email</span><span class="todo">à compléter</span></div>
           <div><span>Zone d'intervention</span><span class="todo">à compléter</span></div>
+          <div><span>Instagram</span><span class="todo">à compléter</span></div>
         </div>
         <form id="quote-form" novalidate>
           <div class="row">
@@ -290,7 +298,9 @@
           <div class="row">
             <label for="f-type">Type d'événement
               <select id="f-type" name="type">
-                <option>Événement privé</option>
+                <option>Mariage</option>
+                <option>Anniversaire</option>
+                <option>Autre événement privé</option>
                 <option>Événement professionnel</option>
               </select>
             </label>
@@ -302,7 +312,7 @@
           </div>
           <label for="f-msg">Votre message<textarea id="f-msg" name="message"></textarea></label>
           <div><button class="btn" type="submit">Envoyer la demande</button></div>
-          <p class="note">Le formulaire n'est pas encore relié à une adresse email : on le branchera une fois tes coordonnées fixées.</p>
+          <p class="note">Le formulaire n'est pas encore relié à une adresse email : on le branchera une fois les coordonnées fixées.</p>
           <p class="sent" id="f-result" hidden></p>
         </form>
       </div>
@@ -311,7 +321,10 @@
 </main>
 
 <footer>
-  <div class="wrap">© <span id="year"></span> Manicrac <span class="todo">nom, SIRET, mentions légales</span></div>
+  <div class="wrap">
+    <span class="brand">CHOUCHOU</span>
+    <span>© <span id="year"></span> Chouchou · <span class="todo">SIRET, mentions légales</span></span>
+  </div>
 </footer>
 
 <script>
@@ -319,7 +332,7 @@
   document.getElementById("quote-form").addEventListener("submit", (e) => {
     e.preventDefault();
     const f = e.currentTarget, out = document.getElementById("f-result");
-    if (!f.name.value.trim() || !f.email.checkValidity() || !f.email.value) {
+    if (!f.name.value.trim() || !f.email.value || !f.email.checkValidity()) {
       out.textContent = "Indiquez votre nom et une adresse email valide pour qu'on puisse vous répondre.";
     } else {
       out.textContent = `Merci ${f.name.value.trim()} ! (Aperçu : la demande n'est pas encore envoyée, le formulaire sera branché prochainement.)`;
