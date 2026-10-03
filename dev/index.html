@@ -2,205 +2,330 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Agent CDM 2026 — Dev</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Location Manicrac</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,800&display=swap">
 <style>
+  /* Layout : enseigne de fête foraine en ouverture (cadre d'ampoules), puis sections simples en une colonne qui s'élargit en grille. */
   :root {
-    --bg: #f6f7f9; --surface: #ffffff; --text: #1b1f24; --muted: #5f6b7a;
-    --border: #dde2e8; --accent: #1f6feb; --ok: #1a7f37; --err: #cf222e;
-    --code-bg: #f0f2f5;
+    --bg: #f5f6fa;
+    --surface: #ffffff;
+    --ink: #17203a;
+    --muted: #59627a;
+    --line: #dcdfe8;
+    --accent: #d93a24;
+    --accent-ink: #ffffff;
+    --stage: #17203a;
+    --stage-ink: #f5f6fa;
+    --bulb: #f2b705;
+    --bulb-off: #e6dcc0;
+    --todo-bg: #fff6d6;
+    --todo-ink: #7a5800;
+    --display: "Bowlby One", "Arial Black", Impact, sans-serif;
+    --body: "Nunito Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0f1216; --surface: #171b21; --text: #e6e9ee; --muted: #9aa5b1;
-      --border: #2a313a; --accent: #4c8dff; --ok: #3fb950; --err: #f85149;
-      --code-bg: #11151a;
+      --bg: #111627; --surface: #1a2135; --ink: #eef0f6; --muted: #a5adc2;
+      --stage: #0a0e1b; --stage-ink: #eef0f6;
+      --line: #2c3550; --accent: #ff6a52; --accent-ink: #1a0d0a;
+      --bulb: #ffc928; --bulb-off: #3b3a33; --todo-bg: #3a3112; --todo-ink: #ffd96b;
+      color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #0f1216; --surface: #171b21; --text: #e6e9ee; --muted: #9aa5b1;
-    --border: #2a313a; --accent: #4c8dff; --ok: #3fb950; --err: #f85149;
-    --code-bg: #11151a;
+    --bg: #111627; --surface: #1a2135; --ink: #eef0f6; --muted: #a5adc2;
+    --stage: #0a0e1b; --stage-ink: #eef0f6;
+      --line: #2c3550; --accent: #ff6a52; --accent-ink: #1a0d0a;
+    --bulb: #ffc928; --bulb-off: #3b3a33; --todo-bg: #3a3112; --todo-ink: #ffd96b;
+    color-scheme: dark;
   }
+
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 400 1.0625rem/1.6 var(--body);
   }
-  header, main { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
-  header { padding-top: 24px; padding-bottom: 8px; }
-  h1 { font-size: 1.4rem; margin: 0; }
-  header p { color: var(--muted); margin: 4px 0 0; }
-  main { display: grid; gap: 16px; grid-template-columns: 1fr; padding-bottom: 32px; }
-  @media (min-width: 860px) { main { grid-template-columns: 1fr 1fr; } .wide { grid-column: 1 / -1; } }
-  section {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px; min-width: 0;
+  .wrap { max-width: 1080px; margin: 0 auto; padding-inline: 16px; }
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+  h2 { font: 400 clamp(1.6rem, 4vw, 2.2rem)/1.15 var(--display); letter-spacing: .01em; }
+  h3 { font-size: 1.15rem; font-weight: 800; }
+  p { margin: 0; max-width: 65ch; }
+  a { color: var(--accent); }
+  :focus-visible { outline: 3px solid var(--bulb); outline-offset: 2px; }
+
+  .todo {
+    display: inline-block; background: var(--todo-bg); color: var(--todo-ink);
+    border: 1px dashed currentColor; border-radius: 4px; padding: 0 .4em;
+    font-size: .85em; font-weight: 600;
   }
-  h2 { font-size: 1rem; margin: 0 0 12px; }
-  label { display: block; font-size: .85rem; color: var(--muted); margin: 10px 0 4px; }
-  input, textarea {
-    width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
-    background: var(--bg); color: var(--text); font: inherit;
+
+  /* Navigation */
+  .nav {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
   }
-  textarea { font-family: ui-monospace, Menlo, monospace; font-size: .8rem; min-height: 320px; resize: vertical; }
-  button {
-    margin-top: 12px; padding: 8px 14px; border: 0; border-radius: 6px;
-    background: var(--accent); color: #fff; font: inherit; cursor: pointer;
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+  .brand { font: 400 1.25rem/1 var(--display); color: var(--ink); text-decoration: none; }
+  .nav ul { display: flex; gap: 20px; list-style: none; margin: 0; padding: 0; font-weight: 600; font-size: .95rem; }
+  .nav ul a { color: var(--ink); text-decoration: none; }
+  .nav ul a:hover { color: var(--accent); }
+  @media (max-width: 640px) { .nav ul li:not(:last-child) { display: none; } }
+
+  .btn {
+    display: inline-block; background: var(--accent); color: var(--accent-ink);
+    font-weight: 800; text-decoration: none; border: 0; border-radius: 999px;
+    padding: .7em 1.4em; font-family: var(--body); font-size: 1rem; cursor: pointer;
   }
-  button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-  .notif {
-    background: var(--code-bg); border-radius: 10px; padding: 12px 14px;
-    white-space: pre-wrap; overflow-wrap: anywhere;
+  .btn.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+
+  /* Hero : l'enseigne lumineuse */
+  .hero { padding-block: 40px 56px; }
+  .marquee {
+    position: relative; border-radius: 22px; padding: 44px 28px;
+    background: var(--stage); color: var(--stage-ink);
   }
-  .notif strong { display: block; margin-bottom: 6px; }
-  .status { margin-top: 10px; font-size: .85rem; min-height: 1.2em; }
-  .status.ok { color: var(--ok); } .status.err { color: var(--err); }
-  .placeholder { color: var(--muted); font-style: italic; }
+  .marquee::before {
+    content: ""; position: absolute; inset: 10px; border-radius: 14px; pointer-events: none;
+    background:
+      radial-gradient(circle, var(--bulb) 3.5px, transparent 4.5px) 0 0 / 22px 22px repeat-x,
+      radial-gradient(circle, var(--bulb) 3.5px, transparent 4.5px) 0 100% / 22px 22px repeat-x,
+      radial-gradient(circle, var(--bulb) 3.5px, transparent 4.5px) 0 0 / 22px 22px repeat-y,
+      radial-gradient(circle, var(--bulb) 3.5px, transparent 4.5px) 100% 0 / 22px 22px repeat-y;
+    animation: chase 1.6s steps(2) infinite;
+  }
+  @keyframes chase { 50% { filter: brightness(.55); } }
+  @media (prefers-reduced-motion: reduce) { .marquee::before { animation: none; } }
+  .marquee > * { position: relative; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-weight: 800; font-size: .8rem; color: var(--bulb); }
+  .hero h1 { font: 400 clamp(2.2rem, 7vw, 4.4rem)/1.02 var(--display); margin-block: 12px 18px; }
+  .hero h1 span { color: var(--bulb); }
+  .hero p { color: color-mix(in srgb, var(--stage-ink) 82%, var(--stage)); font-size: 1.15rem; }
+  .hero .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .hero .btn.ghost { color: var(--stage-ink); box-shadow: inset 0 0 0 2px var(--stage-ink); }
+
+  section.block { padding-block: 56px; border-top: 1px solid var(--line); }
+  .block header { display: grid; gap: 10px; margin-bottom: 28px; }
+  .block header p { color: var(--muted); }
+
+  /* Pour qui */
+  .audiences { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+  .audience { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: grid; gap: 12px; align-content: start; }
+  .audience .tag { font: 400 .95rem/1 var(--display); color: var(--accent); letter-spacing: .03em; }
+  .audience ul { margin: 0; padding-left: 1.1em; color: var(--muted); }
+
+  /* Machines */
+  .machines { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+  .machine { display: grid; gap: 12px; align-content: start; }
+  .photo {
+    aspect-ratio: 4 / 3; max-width: 100%; border-radius: 14px;
+    border: 2px dashed var(--line); display: grid; place-items: center;
+    color: var(--muted); font-size: .9rem; background: var(--surface);
+  }
+  .specs { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 0; font-size: .95rem; }
+  .specs dt { color: var(--muted); }
+  .specs dd { margin: 0; }
+
+  /* Déroulé */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); counter-reset: step; }
+  .steps li { counter-increment: step; display: grid; gap: 6px; align-content: start; }
+  .steps li::before { content: counter(step); font: 400 2.4rem/1 var(--display); color: var(--accent); }
+  .steps p { color: var(--muted); }
+
+  /* Contact */
+  .contact { display: grid; gap: 28px; grid-template-columns: 1fr; }
+  @media (min-width: 820px) { .contact { grid-template-columns: 1fr 1.3fr; } }
+  .contact > * { min-width: 0; }
+  .coords { display: grid; gap: 14px; align-content: start; }
+  .coords div { display: grid; gap: 2px; justify-items: start; }
+  .coords span:first-child { text-transform: uppercase; letter-spacing: .08em; font-size: .75rem; font-weight: 800; color: var(--muted); }
+  form { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; display: grid; gap: 14px; }
+  .row { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); }
+  label { display: grid; gap: 4px; font-weight: 600; font-size: .9rem; }
+  input, select, textarea {
+    font: inherit; font-weight: 400; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line); border-radius: 8px; padding: .55em .7em; width: 100%;
+  }
+  textarea { min-height: 110px; resize: vertical; }
+  .note { font-size: .9rem; color: var(--muted); }
+  .sent { border-radius: 10px; padding: 12px 14px; background: var(--todo-bg); color: var(--todo-ink); font-size: .95rem; }
+
+  footer { border-top: 1px solid var(--line); padding-block: 28px; color: var(--muted); font-size: .9rem; }
 </style>
 </head>
 <body>
-<header>
-  <h1>⚽ Agent Coupe du Monde 2026 — Environnement de dev</h1>
-  <p>Simuler un match, prévisualiser la notification et l'envoyer sur ntfy, sans lancer l'agent.</p>
-</header>
 
-<main>
-  <section>
-    <h2>1. Configuration</h2>
-    <label for="topic">Topic ntfy (NTFY_TOPIC)</label>
-    <input id="topic" placeholder="worldcup2026-votre-id-unique">
-    <label for="server">Serveur ntfy</label>
-    <input id="server" value="https://ntfy.sh">
+<nav class="nav" aria-label="Navigation principale">
+  <div class="wrap">
+    <a class="brand" href="#top">Manicrac <span class="todo">nom</span></a>
+    <ul>
+      <li><a href="#pour-qui">Pour qui</a></li>
+      <li><a href="#machines">Les machines</a></li>
+      <li><a href="#deroule">Comment ça marche</a></li>
+      <li><a class="btn" href="#devis">Demander un devis</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="top">
+  <div class="wrap hero">
+    <div class="marquee">
+      <p class="eyebrow">Location de machines Manicrac</p>
+      <h1>Votre événement a besoin d'une <span>attraction</span>.</h1>
+      <p>Nous livrons et installons des machines Manicrac pour vos fêtes privées et vos événements d'entreprise.
+        <span class="todo">accroche à valider</span></p>
+      <div class="actions">
+        <a class="btn" href="#devis">Demander un devis</a>
+        <a class="btn ghost" href="#machines">Voir les machines</a>
+      </div>
+    </div>
+  </div>
+
+  <section class="block" id="pour-qui">
+    <div class="wrap">
+      <header>
+        <h2>Pour qui ?</h2>
+        <p>Particuliers ou entreprises, la machine s'adapte à votre format.</p>
+      </header>
+      <div class="audiences">
+        <article class="audience">
+          <span class="tag">Événements privés</span>
+          <h3>Pour faire la fête</h3>
+          <ul>
+            <li>Anniversaires</li>
+            <li>Mariages</li>
+            <li>Soirées entre amis</li>
+            <li><span class="todo">autres occasions ?</span></li>
+          </ul>
+        </article>
+        <article class="audience">
+          <span class="tag">Événements professionnels</span>
+          <h3>Pour marquer les esprits</h3>
+          <ul>
+            <li>Séminaires et team building</li>
+            <li>Salons et stands</li>
+            <li>Soirées d'entreprise</li>
+            <li><span class="todo">autres occasions ?</span></li>
+          </ul>
+        </article>
+      </div>
+    </div>
   </section>
 
-  <section>
-    <h2>3. Aperçu de la notification</h2>
-    <div class="notif" id="preview"><strong id="pv-title"></strong><span id="pv-body"></span></div>
-    <button id="send">Envoyer sur ntfy</button>
-    <div class="status" id="status"></div>
+  <section class="block" id="machines">
+    <div class="wrap">
+      <header>
+        <h2>Les machines</h2>
+        <p><span class="todo">Description d'une machine Manicrac : ce que font les invités, pourquoi ça plaît</span></p>
+      </header>
+      <div class="machines">
+        <article class="machine">
+          <div class="photo">Photo à ajouter</div>
+          <h3>Machine 1 <span class="todo">nom</span></h3>
+          <dl class="specs">
+            <dt>Dimensions</dt><dd><span class="todo">à compléter</span></dd>
+            <dt>Alimentation</dt><dd><span class="todo">à compléter</span></dd>
+            <dt>Tarif</dt><dd><span class="todo">à compléter</span></dd>
+          </dl>
+        </article>
+        <article class="machine">
+          <div class="photo">Photo à ajouter</div>
+          <h3>Machine 2 <span class="todo">nom</span></h3>
+          <dl class="specs">
+            <dt>Dimensions</dt><dd><span class="todo">à compléter</span></dd>
+            <dt>Alimentation</dt><dd><span class="todo">à compléter</span></dd>
+            <dt>Tarif</dt><dd><span class="todo">à compléter</span></dd>
+          </dl>
+        </article>
+        <article class="machine">
+          <div class="photo">Photo à ajouter</div>
+          <h3>Machine 3 <span class="todo">nom</span></h3>
+          <dl class="specs">
+            <dt>Dimensions</dt><dd><span class="todo">à compléter</span></dd>
+            <dt>Alimentation</dt><dd><span class="todo">à compléter</span></dd>
+            <dt>Tarif</dt><dd><span class="todo">à compléter</span></dd>
+          </dl>
+        </article>
+      </div>
+    </div>
   </section>
 
-  <section class="wide">
-    <h2>2. Match simulé (format football-data.org v4)</h2>
-    <textarea id="match" spellcheck="false"></textarea>
-    <button class="secondary" id="reset">Réinitialiser l'exemple</button>
-    <div class="status" id="json-status"></div>
+  <section class="block" id="deroule">
+    <div class="wrap">
+      <header>
+        <h2>Comment ça marche</h2>
+        <p>Une location en quatre étapes. <span class="todo">déroulé à valider</span></p>
+      </header>
+      <ol class="steps">
+        <li><h3>Vous demandez un devis</h3><p>Date, lieu, nombre d'invités : on vous répond avec une proposition.</p></li>
+        <li><h3>On livre et on installe</h3><p>La machine arrive prête à fonctionner sur le lieu de l'événement.</p></li>
+        <li><h3>Vos invités en profitent</h3><p>Pendant toute la durée de la location.</p></li>
+        <li><h3>On reprend la machine</h3><p>Démontage et retour, vous n'avez rien à gérer.</p></li>
+      </ol>
+    </div>
   </section>
 
-  <section class="wide">
-    <h2>4. À définir</h2>
-    <p class="placeholder">Section réservée pour la suite (ex. historique des envois, plusieurs matchs, etc.).</p>
+  <section class="block" id="devis">
+    <div class="wrap">
+      <header>
+        <h2>Demander un devis</h2>
+        <p>Décrivez votre événement, nous revenons vers vous rapidement.</p>
+      </header>
+      <div class="contact">
+        <div class="coords">
+          <div><span>Téléphone</span><span class="todo">à compléter</span></div>
+          <div><span>Email</span><span class="todo">à compléter</span></div>
+          <div><span>Zone d'intervention</span><span class="todo">à compléter</span></div>
+        </div>
+        <form id="quote-form" novalidate>
+          <div class="row">
+            <label for="f-name">Nom<input id="f-name" name="name" autocomplete="name" required></label>
+            <label for="f-email">Email<input id="f-email" name="email" type="email" autocomplete="email" required></label>
+          </div>
+          <div class="row">
+            <label for="f-type">Type d'événement
+              <select id="f-type" name="type">
+                <option>Événement privé</option>
+                <option>Événement professionnel</option>
+              </select>
+            </label>
+            <label for="f-date">Date<input id="f-date" name="date" type="date"></label>
+          </div>
+          <div class="row">
+            <label for="f-place">Lieu (ville)<input id="f-place" name="place"></label>
+            <label for="f-guests">Nombre d'invités<input id="f-guests" name="guests" type="number" min="1" inputmode="numeric"></label>
+          </div>
+          <label for="f-msg">Votre message<textarea id="f-msg" name="message"></textarea></label>
+          <div><button class="btn" type="submit">Envoyer la demande</button></div>
+          <p class="note">Le formulaire n'est pas encore relié à une adresse email : on le branchera une fois tes coordonnées fixées.</p>
+          <p class="sent" id="f-result" hidden></p>
+        </form>
+      </div>
+    </div>
   </section>
 </main>
 
+<footer>
+  <div class="wrap">© <span id="year"></span> Manicrac <span class="todo">nom, SIRET, mentions légales</span></div>
+</footer>
+
 <script>
-// Port JS de build_notification() / format_scorers() de agent.py — garder les deux synchronisés.
-const STAGE_LABELS = {
-  GROUP_STAGE: "Phase de groupes", ROUND_OF_16: "8es de finale",
-  QUARTER_FINALS: "Quarts de finale", SEMI_FINALS: "Demi-finales",
-  THIRD_PLACE: "Match pour la 3e place", FINAL: "FINALE",
-};
-
-const SAMPLE_MATCH = {
-  id: 1, stage: "FINAL", group: null,
-  homeTeam: { id: 773, name: "France", shortName: "France", tla: "FRA" },
-  awayTeam: { id: 764, name: "Brazil", shortName: "Brésil", tla: "BRA" },
-  score: { fullTime: { home: 2, away: 1 }, extraTime: { home: null, away: null }, penalties: { home: null, away: null } },
-  goals: [
-    { minute: 12, injuryTime: null, type: "REGULAR", team: { id: 764 }, scorer: { name: "Vinicius Jr." } },
-    { minute: 34, injuryTime: null, type: "PENALTY", team: { id: 773 }, scorer: { name: "Mbappé" } },
-    { minute: 67, injuryTime: null, type: "REGULAR", team: { id: 773 }, scorer: { name: "Dembélé" } },
-  ],
-};
-
-const $ = (id) => document.getElementById(id);
-const teamLabel = (t) => t.shortName || t.tla || t.name;
-const v = (x) => (x === null || x === undefined ? "?" : x);
-
-function formatScorers(m) {
-  const homeId = m.homeTeam.id, home = [], away = [];
-  for (const g of m.goals || []) {
-    const name = (g.scorer || {}).name || "?";
-    const time = g.injuryTime ? `${v(g.minute)}+${g.injuryTime}'` : `${v(g.minute)}'`;
-    const suffix = g.type === "OWN_GOAL" ? " (csc)" : g.type === "PENALTY" ? " (pen)" : "";
-    ((g.team || {}).id === homeId ? home : away).push(`${name} ${time}${suffix}`);
-  }
-  const lines = [];
-  if (home.length) lines.push(`${teamLabel(m.homeTeam)}: ${home.join(", ")}`);
-  if (away.length) lines.push(`${teamLabel(m.awayTeam)}: ${away.join(", ")}`);
-  return lines.length ? lines.join("\n") : "Aucun but";
-}
-
-function buildNotification(m) {
-  const home = teamLabel(m.homeTeam), away = teamLabel(m.awayTeam);
-  const score = m.score || {}, ft = score.fullTime || {};
-  const stage = m.stage || "";
-  let stageLabel = STAGE_LABELS[stage] ||
-    stage.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
-  if (m.group && stage === "GROUP_STAGE") stageLabel = `Groupe ${m.group.replace("GROUP_", "")}`;
-
-  const title = `⚽ ${home} ${v(ft.home)}–${v(ft.away)} ${away} | FT`;
-  const body = [`🏆 Coupe du Monde 2026 · ${stageLabel}`, "", "Buteurs:", formatScorers(m)];
-  const extra = score.extraTime || {}, pens = score.penalties || {};
-  if (extra.home !== null && extra.home !== undefined) {
-    const rt = score.regularTime || {};
-    body.push(`\n90' : ${v(rt.home)}–${v(rt.away)}`);
-    body.push(`Prolongations : ${extra.home}–${extra.away}`);
-  }
-  if (pens.home !== null && pens.home !== undefined) {
-    body.push(`Tirs au but : ${home} ${pens.home}–${pens.away} ${away}`);
-  }
-  return { title, body: body.join("\n") };
-}
-
-function setStatus(el, msg, kind) { el.textContent = msg; el.className = "status " + (kind || ""); }
-
-let current = null;
-function refresh() {
-  try {
-    current = buildNotification(JSON.parse($("match").value));
-    $("pv-title").textContent = current.title;
-    $("pv-body").textContent = current.body;
-    setStatus($("json-status"), "");
-  } catch (e) {
-    current = null;
-    setStatus($("json-status"), "JSON invalide : " + e.message, "err");
-  }
-}
-
-function store(key, val) { try { localStorage.setItem(key, val); } catch (_) {} }
-function load(key) { try { return localStorage.getItem(key); } catch (_) { return null; } }
-
-$("match").value = load("dev.match") || JSON.stringify(SAMPLE_MATCH, null, 2);
-$("topic").value = load("dev.topic") || "";
-$("match").addEventListener("input", () => { store("dev.match", $("match").value); refresh(); });
-$("topic").addEventListener("input", () => store("dev.topic", $("topic").value));
-$("reset").addEventListener("click", () => {
-  $("match").value = JSON.stringify(SAMPLE_MATCH, null, 2);
-  store("dev.match", $("match").value);
-  refresh();
-});
-
-$("send").addEventListener("click", async () => {
-  const topic = $("topic").value.trim(), st = $("status");
-  if (!topic) return setStatus(st, "Renseigne un topic ntfy d'abord.", "err");
-  if (!current) return setStatus(st, "Corrige le JSON du match d'abord.", "err");
-  setStatus(st, "Envoi…");
-  try {
-    // JSON publish : évite les soucis d'encodage des en-têtes (Title avec emoji).
-    const resp = await fetch($("server").value.replace(/\/$/, ""), {
-      method: "POST",
-      body: JSON.stringify({ topic, title: current.title, message: current.body, priority: 4, tags: ["soccer", "trophy"] }),
-    });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    setStatus(st, `✅ Envoyé sur « ${topic} »`, "ok");
-  } catch (e) {
-    setStatus(st, "❌ Échec : " + e.message, "err");
-  }
-});
-
-refresh();
+  document.getElementById("year").textContent = new Date().getFullYear();
+  document.getElementById("quote-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const f = e.currentTarget, out = document.getElementById("f-result");
+    if (!f.name.value.trim() || !f.email.checkValidity() || !f.email.value) {
+      out.textContent = "Indiquez votre nom et une adresse email valide pour qu'on puisse vous répondre.";
+    } else {
+      out.textContent = `Merci ${f.name.value.trim()} ! (Aperçu : la demande n'est pas encore envoyée, le formulaire sera branché prochainement.)`;
+    }
+    out.hidden = false;
+  });
 </script>
 </body>
 </html>
