@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent CDM 2026 — Dev</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --text: #1b1f24; --muted: #5f6b7a;
+    --border: #dde2e8; --accent: #1f6feb; --ok: #1a7f37; --err: #cf222e;
+    --code-bg: #f0f2f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1216; --surface: #171b21; --text: #e6e9ee; --muted: #9aa5b1;
+      --border: #2a313a; --accent: #4c8dff; --ok: #3fb950; --err: #f85149;
+      --code-bg: #11151a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1216; --surface: #171b21; --text: #e6e9ee; --muted: #9aa5b1;
+    --border: #2a313a; --accent: #4c8dff; --ok: #3fb950; --err: #f85149;
+    --code-bg: #11151a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  header, main { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+  header { padding-top: 24px; padding-bottom: 8px; }
+  h1 { font-size: 1.4rem; margin: 0; }
+  header p { color: var(--muted); margin: 4px 0 0; }
+  main { display: grid; gap: 16px; grid-template-columns: 1fr; padding-bottom: 32px; }
+  @media (min-width: 860px) { main { grid-template-columns: 1fr 1fr; } .wide { grid-column: 1 / -1; } }
+  section {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px; min-width: 0;
+  }
+  h2 { font-size: 1rem; margin: 0 0 12px; }
+  label { display: block; font-size: .85rem; color: var(--muted); margin: 10px 0 4px; }
+  input, textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--bg); color: var(--text); font: inherit;
+  }
+  textarea { font-family: ui-monospace, Menlo, monospace; font-size: .8rem; min-height: 320px; resize: vertical; }
+  button {
+    margin-top: 12px; padding: 8px 14px; border: 0; border-radius: 6px;
+    background: var(--accent); color: #fff; font: inherit; cursor: pointer;
+  }
+  button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  .notif {
+    background: var(--code-bg); border-radius: 10px; padding: 12px 14px;
+    white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  .notif strong { display: block; margin-bottom: 6px; }
+  .status { margin-top: 10px; font-size: .85rem; min-height: 1.2em; }
+  .status.ok { color: var(--ok); } .status.err { color: var(--err); }
+  .placeholder { color: var(--muted); font-style: italic; }
+</style>
+</head>
+<body>
+<header>
+  <h1>⚽ Agent Coupe du Monde 2026 — Environnement de dev</h1>
+  <p>Simuler un match, prévisualiser la notification et l'envoyer sur ntfy, sans lancer l'agent.</p>
+</header>
+
+<main>
+  <section>
+    <h2>1. Configuration</h2>
+    <label for="topic">Topic ntfy (NTFY_TOPIC)</label>
+    <input id="topic" placeholder="worldcup2026-votre-id-unique">
+    <label for="server">Serveur ntfy</label>
+    <input id="server" value="https://ntfy.sh">
+  </section>
+
+  <section>
+    <h2>3. Aperçu de la notification</h2>
+    <div class="notif" id="preview"><strong id="pv-title"></strong><span id="pv-body"></span></div>
+    <button id="send">Envoyer sur ntfy</button>
+    <div class="status" id="status"></div>
+  </section>
+
+  <section class="wide">
+    <h2>2. Match simulé (format football-data.org v4)</h2>
+    <textarea id="match" spellcheck="false"></textarea>
+    <button class="secondary" id="reset">Réinitialiser l'exemple</button>
+    <div class="status" id="json-status"></div>
+  </section>
+
+  <section class="wide">
+    <h2>4. À définir</h2>
+    <p class="placeholder">Section réservée pour la suite (ex. historique des envois, plusieurs matchs, etc.).</p>
+  </section>
+</main>
+
+<script>
+// Port JS de build_notification() / format_scorers() de agent.py — garder les deux synchronisés.
+const STAGE_LABELS = {
+  GROUP_STAGE: "Phase de groupes", ROUND_OF_16: "8es de finale",
+  QUARTER_FINALS: "Quarts de finale", SEMI_FINALS: "Demi-finales",
+  THIRD_PLACE: "Match pour la 3e place", FINAL: "FINALE",
+};
+
+const SAMPLE_MATCH = {
+  id: 1, stage: "FINAL", group: null,
+  homeTeam: { id: 773, name: "France", shortName: "France", tla: "FRA" },
+  awayTeam: { id: 764, name: "Brazil", shortName: "Brésil", tla: "BRA" },
+  score: { fullTime: { home: 2, away: 1 }, extraTime: { home: null, away: null }, penalties: { home: null, away: null } },
+  goals: [
+    { minute: 12, injuryTime: null, type: "REGULAR", team: { id: 764 }, scorer: { name: "Vinicius Jr." } },
+    { minute: 34, injuryTime: null, type: "PENALTY", team: { id: 773 }, scorer: { name: "Mbappé" } },
+    { minute: 67, injuryTime: null, type: "REGULAR", team: { id: 773 }, scorer: { name: "Dembélé" } },
+  ],
+};
+
+const $ = (id) => document.getElementById(id);
+const teamLabel = (t) => t.shortName || t.tla || t.name;
+const v = (x) => (x === null || x === undefined ? "?" : x);
+
+function formatScorers(m) {
+  const homeId = m.homeTeam.id, home = [], away = [];
+  for (const g of m.goals || []) {
+    const name = (g.scorer || {}).name || "?";
+    const time = g.injuryTime ? `${v(g.minute)}+${g.injuryTime}'` : `${v(g.minute)}'`;
+    const suffix = g.type === "OWN_GOAL" ? " (csc)" : g.type === "PENALTY" ? " (pen)" : "";
+    ((g.team || {}).id === homeId ? home : away).push(`${name} ${time}${suffix}`);
+  }
+  const lines = [];
+  if (home.length) lines.push(`${teamLabel(m.homeTeam)}: ${home.join(", ")}`);
+  if (away.length) lines.push(`${teamLabel(m.awayTeam)}: ${away.join(", ")}`);
+  return lines.length ? lines.join("\n") : "Aucun but";
+}
+
+function buildNotification(m) {
+  const home = teamLabel(m.homeTeam), away = teamLabel(m.awayTeam);
+  const score = m.score || {}, ft = score.fullTime || {};
+  const stage = m.stage || "";
+  let stageLabel = STAGE_LABELS[stage] ||
+    stage.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  if (m.group && stage === "GROUP_STAGE") stageLabel = `Groupe ${m.group.replace("GROUP_", "")}`;
+
+  const title = `⚽ ${home} ${v(ft.home)}–${v(ft.away)} ${away} | FT`;
+  const body = [`🏆 Coupe du Monde 2026 · ${stageLabel}`, "", "Buteurs:", formatScorers(m)];
+  const extra = score.extraTime || {}, pens = score.penalties || {};
+  if (extra.home !== null && extra.home !== undefined) {
+    const rt = score.regularTime || {};
+    body.push(`\n90' : ${v(rt.home)}–${v(rt.away)}`);
+    body.push(`Prolongations : ${extra.home}–${extra.away}`);
+  }
+  if (pens.home !== null && pens.home !== undefined) {
+    body.push(`Tirs au but : ${home} ${pens.home}–${pens.away} ${away}`);
+  }
+  return { title, body: body.join("\n") };
+}
+
+function setStatus(el, msg, kind) { el.textContent = msg; el.className = "status " + (kind || ""); }
+
+let current = null;
+function refresh() {
+  try {
+    current = buildNotification(JSON.parse($("match").value));
+    $("pv-title").textContent = current.title;
+    $("pv-body").textContent = current.body;
+    setStatus($("json-status"), "");
+  } catch (e) {
+    current = null;
+    setStatus($("json-status"), "JSON invalide : " + e.message, "err");
+  }
+}
+
+function store(key, val) { try { localStorage.setItem(key, val); } catch (_) {} }
+function load(key) { try { return localStorage.getItem(key); } catch (_) { return null; } }
+
+$("match").value = load("dev.match") || JSON.stringify(SAMPLE_MATCH, null, 2);
+$("topic").value = load("dev.topic") || "";
+$("match").addEventListener("input", () => { store("dev.match", $("match").value); refresh(); });
+$("topic").addEventListener("input", () => store("dev.topic", $("topic").value));
+$("reset").addEventListener("click", () => {
+  $("match").value = JSON.stringify(SAMPLE_MATCH, null, 2);
+  store("dev.match", $("match").value);
+  refresh();
+});
+
+$("send").addEventListener("click", async () => {
+  const topic = $("topic").value.trim(), st = $("status");
+  if (!topic) return setStatus(st, "Renseigne un topic ntfy d'abord.", "err");
+  if (!current) return setStatus(st, "Corrige le JSON du match d'abord.", "err");
+  setStatus(st, "Envoi…");
+  try {
+    // JSON publish : évite les soucis d'encodage des en-têtes (Title avec emoji).
+    const resp = await fetch($("server").value.replace(/\/$/, ""), {
+      method: "POST",
+      body: JSON.stringify({ topic, title: current.title, message: current.body, priority: 4, tags: ["soccer", "trophy"] }),
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    setStatus(st, `✅ Envoyé sur « ${topic} »`, "ok");
+  } catch (e) {
+    setStatus(st, "❌ Échec : " + e.message, "err");
+  }
+});
+
+refresh();
+</script>
+</body>
+</html>
